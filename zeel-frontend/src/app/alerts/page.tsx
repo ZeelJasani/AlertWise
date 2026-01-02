@@ -38,16 +38,16 @@ const alerts = [
 
 export default function AlertsPage() {
     return (
-        <div className="pt-32 pb-24 min-h-screen bg-black">
+        <div className="pt-32 pb-24 min-h-screen bg-background transition-colors duration-500">
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-16">
                     <div>
-                        <h1 className="text-4xl font-bold text-white mb-4">Emergency Alerts</h1>
-                        <p className="text-zinc-400">
+                        <h1 className="text-4xl font-extrabold text-foreground mb-4">Emergency Alerts</h1>
+                        <p className="text-muted-foreground font-medium">
                             Live updates and critical notifications for your current location.
                         </p>
                     </div>
-                    <button className="flex items-center gap-2 rounded-full bg-blue-600 px-6 py-3 text-sm font-bold text-white hover:bg-blue-700 transition-all">
+                    <button className="flex items-center gap-2 rounded-full bg-primary px-8 py-4 text-sm font-bold text-primary-foreground hover:bg-primary/90 transition-all shadow-xl shadow-primary/20 hover:scale-105 active:scale-95">
                         <MapIcon className="h-4 w-4" />
                         View Interactive Map
                     </button>
@@ -58,43 +58,44 @@ export default function AlertsPage() {
                         <motion.div
                             key={alert.title}
                             initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: index * 0.1 }}
-                            className="group rounded-[2rem] bg-zinc-900/30 border border-white/5 p-8 flex flex-col md:flex-row gap-8 items-start relative overflow-hidden"
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.5, delay: index * 0.1 }}
+                            className="group rounded-4xl bg-card border border-border p-8 flex flex-col md:flex-row gap-8 items-start relative overflow-hidden shadow-sm hover:shadow-xl hover:border-primary/20 transition-all"
                         >
-                            <div className={`shrink-0 p-4 rounded-2xl ${alert.bg} ${alert.color}`}>
+                            <div className={`shrink-0 p-5 rounded-3xl ${alert.bg} ${alert.color} shadow-inner`}>
                                 <alert.icon className="h-8 w-8" />
                             </div>
 
                             <div className="flex-1">
-                                <div className="flex items-center gap-3 mb-2">
-                                    <span className={`text-xs font-bold uppercase tracking-widest px-2 py-0.5 rounded ${alert.bg} ${alert.color}`}>
+                                <div className="flex items-center gap-3 mb-3">
+                                    <span className={`text-[10px] font-black uppercase tracking-[0.2em] px-3 py-1 rounded-full ${alert.bg} ${alert.color}`}>
                                         {alert.type}
                                     </span>
-                                    <span className="text-xs text-zinc-500 font-medium">{alert.time}</span>
+                                    <span className="text-xs text-muted-foreground font-bold">{alert.time}</span>
                                 </div>
-                                <h3 className="text-2xl font-bold text-white mb-2">{alert.title}</h3>
-                                <p className="text-zinc-500 font-medium mb-4 flex items-center gap-2">
-                                    <span className="h-1.5 w-1.5 rounded-full bg-zinc-700" />
+                                <h3 className="text-2xl font-extrabold text-foreground mb-2 tracking-tight group-hover:text-primary transition-colors">{alert.title}</h3>
+                                <p className="text-muted-foreground font-bold mb-4 flex items-center gap-2 text-sm">
+                                    <span className="h-2 w-2 rounded-full bg-border" />
                                     {alert.location}
                                 </p>
-                                <p className="text-zinc-400 leading-relaxed max-w-3xl border-l border-white/10 pl-4 py-1">
+                                <p className="text-muted-foreground font-medium leading-relaxed max-w-3xl border-l-[3px] border-secondary pl-6 py-2">
                                     {alert.desc}
                                 </p>
                             </div>
 
-                            <button className="md:self-center p-4 rounded-full bg-white/5 border border-white/5 text-zinc-400 hover:text-white hover:bg-white/10 transition-all">
+                            <button className="md:self-center p-5 rounded-2xl bg-secondary border border-border text-muted-foreground hover:text-primary hover:bg-background hover:scale-110 transition-all shadow-sm">
                                 <ExternalLink className="h-5 w-5" />
                             </button>
 
-                            <div className="absolute top-0 right-0 h-full w-1 bg-gradient-to-b from-transparent via-blue-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                            <div className="absolute top-0 right-0 h-full w-1 bg-linear-to-b from-transparent via-primary/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                         </motion.div>
                     ))}
                 </div>
 
                 <div className="mt-16 text-center">
-                    <p className="text-sm text-zinc-600">
-                        Powered by Global Emergency Response Database. Last synced: Just now.
+                    <p className="text-xs text-muted-foreground font-bold uppercase tracking-widest bg-secondary inline-block px-4 py-2 rounded-full border border-border">
+                        Powered by Global Emergency Response Database • Just now
                     </p>
                 </div>
             </div>
