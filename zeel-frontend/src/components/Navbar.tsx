@@ -35,6 +35,12 @@ export default function Navbar() {
                                 >
                                     Learn
                                 </Link>
+                                <Link
+                                    href="/admin"
+                                    className="text-xs font-black text-muted-foreground uppercase tracking-[0.2em] hover:text-primary transition-colors"
+                                >
+                                    Admin
+                                </Link>
                             </div>
                         </div>
 

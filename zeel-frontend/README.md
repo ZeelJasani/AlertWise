@@ -1,36 +1,92 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AlertWise | 🛡️ Your Shield Against Disasters
 
-## Getting Started
+**AlertWise (DisasterEdu)** is a cutting-edge emergency preparedness and response platform designed to empower individuals and organizations with the knowledge and tools needed to survive and manage disasters. Built with a focus on speed, reliability, and modern UI/UX, AlertWise bridges the gap between chaos and coordinated response.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 🚀 Key Features
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 🆘 SOS Emergency System
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Instant alerting with automatic location detection. One-tap communication with the nearest response centers ensures immediate assistance when every second counts.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 🔔 Live Emergency Alerts
 
-## Learn More
+A real-time feed of critical notifications customized for your location. From flash floods to power grid maintenance, stay informed with localized, high-priority updates.
 
-To learn more about Next.js, take a look at the following resources:
+### 🎓 Interactive Education Hub
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Deep-dive into disaster-specific survival guides (Earthquakes, Floods, Wildfires, etc.). Our modules combine expert theory with practical, actionable steps.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### 📝 Gamified Knowledge Checks
 
-## Deploy on Vercel
+Validate your readiness with disaster-specific quizzes. Earn badges and track your "Safety Score" as you progress through the hub.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### 📊 Smart Dashboard
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+A personalized command center to track your learning progress, safety certifications, and recent activities.
+
+### 🤖 Sahayak AI Assistant
+
+Your 24/7 disaster management companion. Ask Sahayak for instant survival tips, evacuation routes, or project-related guidance.
+
+---
+
+## 🗺️ Project Routes
+
+| Route | Description |
+| :--- | :--- |
+| `/` | **Landing Page**: Overview of AlertWise mission and features. |
+| `/dashboard` | **User Dashboard**: Personalized progress, safety score, and recent activity. |
+| `/learn` | **Education Hub**: Browse survival guides and educational modules. |
+| `/learn/[id]` | **Module Viewer**: Interactive learning page with video content and quizzes. |
+| `/alerts` | **Emergency Feed**: Real-time critical alerts and interactive maps. |
+| `/sos` | **SOS Interface**: High-stakes emergency alerting interface. |
+| `/login` | **Authentication**: Secure access to personalized profiles. |
+| `/register` | **Onboarding**: Create a new account to start your safety journey. |
+
+---
+
+## 🛠️ Technology Stack
+
+- **Framework**: [Next.js 15+](https://nextjs.org/) (App Router)
+- **Language**: [TypeScript](https://www.typescriptlang.org/)
+- **Styling**: [Tailwind CSS 4](https://tailwindcss.com/)
+- **Animations**: [Framer Motion](https://www.framer.com/motion/)
+- **Icons**: [Lucide React](https://lucide.dev/)
+
+---
+
+## 🚦 Getting Started
+
+1. **Clone the repository**:
+
+   ```bash
+   git clone https://github.com/ZeelJasani/NU-tech-2026.git
+   ```
+
+2. **Navigate to the frontend directory**:
+
+   ```bash
+   cd zeel-frontend
+   ```
+
+3. **Install dependencies**:
+
+   ```bash
+   npm install
+   ```
+
+4. **Run the development server**:
+
+   ```bash
+   npm run dev
+   ```
+
+5. Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+---
+
+## 🎨 Design Philosophy
+
+AlertWise utilizes a **premium, glassmorphic aesthetic** with a focus on accessibility and high-contrast visuals. The interface is designed to remain intuitive even in high-stress emergency situations, utilizing large interactive elements and clear visual hierarchies.
