@@ -16,41 +16,195 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 
-const quizData = [
-    {
-        id: 1,
-        question: "What is the first action you should take when you feel an earthquake?",
-        options: [
-            "Run outside immediately",
-            "Drop to your hands and knees",
-            "Stand in a doorway",
-            "Call for help"
+const moduleData: Record<string, {
+    title: string;
+    description: string;
+    points: string[];
+    quiz: {
+        id: number;
+        question: string;
+        options: string[];
+        correct: number;
+    }[];
+    icon: string;
+}> = {
+    "earthquake-safety": {
+        title: "Drop, Cover, and Hold On",
+        description: "Essential techniques to survive during the shaking.",
+        icon: "🏢",
+        points: [
+            "Drop to your hands and knees immediately",
+            "Take cover under a sturdy desk or table",
+            "Hold on to your shelter and protect your head",
+            "Stay away from windows and heavy objects",
+            "If outdoors, move away from buildings and power lines"
         ],
-        correct: 1,
+        quiz: [
+            {
+                id: 1,
+                question: "What is the first action you should take when you feel an earthquake?",
+                options: ["Run outside immediately", "Drop to your hands and knees", "Stand in a doorway", "Call for help"],
+                correct: 1,
+            },
+            {
+                id: 2,
+                question: "Where is the safest place to take cover during an earthquake indoors?",
+                options: ["Near a window", "Under a sturdy desk or table", "In a doorway", "Against a wall"],
+                correct: 1,
+            },
+            {
+                id: 3,
+                question: "If you are outdoors during an earthquake, you should:",
+                options: ["Run into the nearest building", "Lie flat on the ground", "Move away from buildings and power lines", "Climb a tree"],
+                correct: 2,
+            },
+        ]
     },
-    {
-        id: 2,
-        question: "Where is the safest place to take cover during an earthquake indoors?",
-        options: [
-            "Near a window",
-            "Under a sturdy desk or table",
-            "In a doorway",
-            "Against a wall"
+    "flood-safety": {
+        title: "Flood Evacuation & Safety",
+        description: "How to stay safe when water levels rise.",
+        icon: "🌊",
+        points: [
+            "Move to higher ground immediately",
+            "Do not walk, swim, or drive through flood waters",
+            "Stay away from bridges over fast-moving water",
+            "Evacuate immediately if told to do so",
+            "Ensure your emergency kit is elevated"
         ],
-        correct: 1,
+        quiz: [
+            {
+                id: 1,
+                question: "What is the rule of thumb for flood water depth and driving?",
+                options: ["Turn around, don't drown", "Drive fast to clear the water", "Only drive if it's below the tires", "Wait for someone else to go first"],
+                correct: 0,
+            },
+            {
+                id: 2,
+                question: "Where should you go if flood waters rise inside your home?",
+                options: ["The basement", "The highest level (not attic)", "Out the front door", "Under the stairs"],
+                correct: 1,
+            },
+            {
+                id: 3,
+                question: "Why should you avoid flood water even if it looks shallow?",
+                options: ["It's cold", "Hidden debris and electrical hazards", "You might get wet", "It attracts mosquitoes"],
+                correct: 1,
+            }
+        ]
     },
-    {
-        id: 3,
-        question: "If you are outdoors during an earthquake, you should:",
-        options: [
-            "Run into the nearest building",
-            "Lie flat on the ground",
-            "Move away from buildings and power lines",
-            "Climb a tree"
+    "wildfire-safety": {
+        title: "Wildfire Evacuation Protocol",
+        description: "Protecting your home and family from fire.",
+        icon: "🔥",
+        points: [
+            "Evacuate as soon as you receive an order",
+            "Keep all windows and doors closed to prevent embers",
+            "Wear long pants, long sleeves, and a mask",
+            "Move flammable furniture away from windows",
+            "Listen to local radio for the safest exit routes"
         ],
-        correct: 2,
+        quiz: [
+            {
+                id: 1,
+                question: "When should you evacuate during a wildfire?",
+                options: ["When you see flames near your yard", "Immediately when ordered to do so", "After packing every last item", "When the power goes out"],
+                correct: 1,
+            },
+            {
+                id: 2,
+                question: "What is the primary danger of wildfires besides direct heat?",
+                options: ["Smoke inhalation", "Sunburn", "Loud noise", "Loss of WiFi"],
+                correct: 0,
+            }
+        ]
     },
-];
+    "tornado-safety": {
+        title: "Seeking Tornado Shelter",
+        description: "Finding the safest spot when a funnel is spotted.",
+        icon: "🌪️",
+        points: [
+            "Go to a basement or an internal room without windows",
+            "Get under a sturdy piece of furniture",
+            "Use your arms to protect your head and neck",
+            "Never try to outrun a tornado in a vehicle",
+            "If in a mobile home, evacuate to a sturdy building"
+        ],
+        quiz: [
+            {
+                id: 1,
+                question: "What is the safest room in a house during a tornado?",
+                options: ["The kitchen", "The master bedroom", "An internal bathroom or closet", "The garage"],
+                correct: 2,
+            },
+            {
+                id: 2,
+                question: "What should you do if you are in a car when a tornado occurs?",
+                options: ["Park under a bridge", "Drive as fast as possible", "Seek shelter in a sturdy building", "Open all windows"],
+                correct: 2,
+            }
+        ]
+    },
+    "cyclone-safety": {
+        title: "Cyclone & Hurricane Safety",
+        description: "Preparing for high-intensity wind and rain.",
+        icon: "🌀",
+        points: [
+            "Board up windows and secure loose outdoor items",
+            "Stay indoors and away from windows during the storm",
+            "Have a battery-powered radio for weather updates",
+            "Turn off electricity and gas if instructed",
+            "Move to the strongest part of the building"
+        ],
+        quiz: [
+            {
+                id: 1,
+                question: "What is the safest place to be during a cyclone?",
+                options: ["On the roof", "Inside a small interior room", "Near a window to watch", "In the backyard"],
+                correct: 1,
+            }
+        ]
+    },
+    "landslide-safety": {
+        title: "Landslide Risk & Response",
+        description: "Identifying warning signs and escaping debris flows.",
+        icon: "⛰️",
+        points: [
+            "Stay alert for sudden changes in water flow",
+            "Listen for unusual sounds like trees cracking",
+            "If you suspect a landslide, evacuate immediately",
+            "Curl into a ball and protect your head if caught",
+            "Stay away from the slide area after it occurs"
+        ],
+        quiz: [
+            {
+                id: 1,
+                question: "What is a common sign of an impending landslide?",
+                options: ["Clear blue skies", "New cracks in foundations or roads", "Strong winds", "A sudden drop in temperature"],
+                correct: 1,
+            }
+        ]
+    },
+    "heatwave-safety": {
+        title: "Handling Extreme Heat",
+        description: "Staying cool and hydrated during record temperatures.",
+        icon: "☀️",
+        points: [
+            "Stay in air-conditioned buildings as much as possible",
+            "Drink more water than usual, even if not thirsty",
+            "Wear lightweight, light-colored, loose clothing",
+            "Avoid strenuous outdoor activities during peak heat",
+            "Check on elderly neighbors and pets frequently"
+        ],
+        quiz: [
+            {
+                id: 1,
+                question: "What is the best way to prevent heatstroke?",
+                options: ["Drinking soda", "Staying hydrated and in the shade", "Wearing heavy clothes", "Running a marathon"],
+                correct: 1,
+            }
+        ]
+    }
+};
 
 export default function ModuleViewerPage() {
     const params = useParams();
@@ -62,20 +216,21 @@ export default function ModuleViewerPage() {
     const [showScoreModal, setShowScoreModal] = useState(false);
     const [score, setScore] = useState(0);
 
+    const currentModule = moduleData[id] || moduleData["earthquake-safety"];
     const moduleName = id.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
 
     const handleSelect = (questionId: number, optionIdx: number) => {
         setAnswers({ ...answers, [questionId]: optionIdx });
     };
 
-    const isComplete = Object.keys(answers).length === quizData.length;
+    const isComplete = Object.keys(answers).length === currentModule.quiz.length;
 
     const handleSubmit = () => {
         let correctCount = 0;
-        quizData.forEach(q => {
+        currentModule.quiz.forEach(q => {
             if (answers[q.id] === q.correct) correctCount++;
         });
-        const finalScore = Math.round((correctCount / quizData.length) * 100);
+        const finalScore = Math.round((correctCount / currentModule.quiz.length) * 100);
         setScore(finalScore);
         setShowScoreModal(true);
     };
@@ -90,7 +245,7 @@ export default function ModuleViewerPage() {
 
                 {/* Sub-header */}
                 <div className="flex items-center justify-between">
-                    <Link href="/dashboard" className="flex items-center gap-2 text-primary hover:text-primary/80 transition-colors">
+                    <Link href="/learn" className="flex items-center gap-2 text-primary hover:text-primary/80 transition-colors">
                         <ArrowLeft className="h-5 w-5" />
                         <Shield className="h-6 w-6 ml-2" />
                         <span className="text-lg font-black text-primary uppercase tracking-tight">{moduleName}</span>
@@ -121,22 +276,22 @@ export default function ModuleViewerPage() {
                     <div className="w-full">
                         <h1 className="text-3xl font-black text-primary flex items-center gap-3">
                             <Play className="h-8 w-8 fill-primary" />
-                            Drop, Cover, and Hold On
+                            {currentModule.title}
                         </h1>
-                        <p className="text-muted-foreground font-bold text-base mt-1">Duration: 2:30</p>
+                        <p className="text-muted-foreground font-bold text-base mt-1">Status: Educational Module</p>
                     </div>
 
                     {/* Video Player Area */}
                     <div className="w-full aspect-video bg-secondary/30 rounded-lg border border-border flex flex-col items-center justify-center relative group">
                         <div className="flex flex-col items-center gap-6">
-                            <div className="h-16 w-16 bg-white rounded-lg shadow-md border border-border flex items-center justify-center">
-                                <span className="text-4xl">🏢</span>
+                            <div className="h-20 w-20 bg-white rounded-2xl shadow-md border border-border flex items-center justify-center">
+                                <span className="text-5xl">{currentModule.icon}</span>
                             </div>
                             <button className="flex items-center gap-3 bg-white border border-border px-8 py-3 rounded-lg shadow-sm hover:bg-secondary transition-all font-black text-primary uppercase tracking-widest">
                                 <Pause className="h-5 w-5 fill-primary" />
                                 Pause
                             </button>
-                            <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Progress: 16%</span>
+                            <span className="text-xs font-black text-muted-foreground uppercase tracking-widest">Learning about {moduleName}</span>
                         </div>
                     </div>
 
@@ -153,13 +308,7 @@ export default function ModuleViewerPage() {
                     <div className="w-full pt-4 space-y-6">
                         <h2 className="text-2xl font-black text-primary uppercase tracking-tight">Key Safety Points</h2>
                         <div className="space-y-4">
-                            {[
-                                "Drop to your hands and knees immediately",
-                                "Take cover under a sturdy desk or table",
-                                "Hold on to your shelter and protect your head",
-                                "Stay away from windows and heavy objects",
-                                "If outdoors, move away from buildings and power lines"
-                            ].map((point, i) => (
+                            {currentModule.points.map((point, i) => (
                                 <div key={i} className="flex items-center gap-3 text-primary font-bold">
                                     <div className="p-1 rounded-full bg-success/10">
                                         <CheckCircle2 className="h-5 w-5 text-success" />
@@ -181,7 +330,7 @@ export default function ModuleViewerPage() {
 
                         {/* Questions List */}
                         <div className="space-y-12 w-full">
-                            {quizData.map((q, qIdx) => (
+                            {currentModule.quiz.map((q, qIdx) => (
                                 <div key={q.id} className="space-y-6">
                                     <h3 className="text-xl font-bold text-primary">
                                         {qIdx + 1}. {q.question}
@@ -220,10 +369,10 @@ export default function ModuleViewerPage() {
                                 onClick={handleSubmit}
                                 disabled={!isComplete}
                                 className={cn(
-                                    "w-full py-4 rounded-lg flex items-center justify-center gap-3 font-black uppercase tracking-widest text-lg shadow-lg transition-all border-b-4",
+                                    "w-full py-4 rounded-xl flex items-center justify-center gap-3 font-bold text-lg transition-all",
                                     isComplete
-                                        ? "bg-success text-white hover:bg-success/90 shadow-success/20 border-black/10 active:border-b-0 active:translate-y-1"
-                                        : "bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed shadow-none"
+                                        ? "bg-success text-white hover:opacity-90 active:scale-[0.98]"
+                                        : "bg-secondary text-muted-foreground cursor-not-allowed"
                                 )}
                             >
                                 Submit Quiz
@@ -258,7 +407,7 @@ export default function ModuleViewerPage() {
                                     </h2>
                                     <p className="text-muted-foreground font-bold">
                                         {score >= 70
-                                            ? "Fantastic work! You have mastered the fundamentals of earthquake safety."
+                                            ? `Fantastic work! You have mastered the fundamentals of ${moduleName}.`
                                             : "You're getting there! Review the safety points and try again."}
                                     </p>
                                 </div>

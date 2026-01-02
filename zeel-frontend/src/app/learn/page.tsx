@@ -11,6 +11,7 @@ const articles = [
         duration: "10 min read",
         icon: Ghost,
         color: "text-amber-500",
+        slug: "earthquake-safety",
     },
     {
         title: "Flood Preparedness 101",
@@ -18,6 +19,7 @@ const articles = [
         duration: "15 min read",
         icon: Waves,
         color: "text-blue-500",
+        slug: "flood-safety",
     },
     {
         title: "Wildfire Response Protocol",
@@ -25,6 +27,7 @@ const articles = [
         duration: "12 min read",
         icon: Flame,
         color: "text-orange-500",
+        slug: "wildfire-safety",
     },
     {
         title: "Tornado Safety Measures",
@@ -32,6 +35,7 @@ const articles = [
         duration: "8 min read",
         icon: Wind,
         color: "text-zinc-400",
+        slug: "tornado-safety",
     },
 ];
 
@@ -66,7 +70,7 @@ export default function LearnPage() {
                             transition={{ delay: index * 0.1 }}
                         >
                             <Link
-                                href="#"
+                                href={`/learn/${article.slug}`}
                                 className="group flex items-center justify-between p-6 rounded-3xl bg-card border border-border hover:bg-secondary/50 hover:border-primary/30 transition-all shadow-sm hover:shadow-lg"
                             >
                                 <div className="flex items-center gap-4">

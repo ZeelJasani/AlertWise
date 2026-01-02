@@ -15,31 +15,31 @@ const disasters = [
         title: "Floods",
         description: "Overwhelming overflow of water onto normally dry land. Common after heavy rain, tropical storms, and rapid snowmelt.",
         icon: Droplets,
-        href: "#",
+        href: "/learn/flood-safety",
     },
     {
         title: "Wildfires",
         description: "Uncontrolled fires in areas of combustible vegetation. Increasingly common due to rising temperatures and dry climates.",
         icon: Flame,
-        href: "#",
+        href: "/learn/wildfire-safety",
     },
     {
         title: "Cyclones",
         description: "Powerful rotating storm systems. Common in coastal regions, bringing high-speed winds and torrential rainfall.",
         icon: Wind,
-        href: "#",
+        href: "/learn/cyclone-safety",
     },
     {
         title: "Landslides",
         description: "The movement of a mass of rock, debris, or earth down a slope. Common in hilly terrains and areas with heavy rainfall.",
         icon: Mountain,
-        href: "#",
+        href: "/learn/landslide-safety",
     },
     {
         title: "Heatwaves",
         description: "Extended periods of excessively hot weather. Becoming a frequent global threat affecting health and resources.",
         icon: Sun,
-        href: "#",
+        href: "/learn/heatwave-safety",
     },
 ];
 
