@@ -1,11 +1,45 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
-import { quizzes } from "../../data/quizzes";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowRight, ArrowLeft } from "lucide-react";
+import { ArrowRight, ArrowLeft, Loader2 } from "lucide-react";
+import { Quiz } from "@/types";
 
 export default function QuizListPage() {
+    const [quizzes, setQuizzes] = useState<Quiz[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchQuizzes = async () => {
+            try {
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/quizzes`);
+                if (res.ok) {
+                    const data = await res.json();
+                    setQuizzes(data);
+                } else {
+                    console.error("Failed to fetch quizzes");
+                }
+            } catch (error) {
+                console.error("Error fetching quizzes:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchQuizzes();
+    }, []);
+
+    if (loading) {
+        return (
+            <div className="flex h-screen items-center justify-center">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            </div>
+        );
+    }
+
     return (
         <div className="container mx-auto py-16 px-4 md:px-12 lg:px-24 max-w-6xl space-y-12">
             {/* Back Button */}
@@ -29,7 +63,7 @@ export default function QuizListPage() {
             {/* Quiz Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 animate-in fade-in-50 slide-in-from-bottom-2 duration-500">
                 {quizzes.map((quiz) => (
-                    <Card key={quiz.id} className="group overflow-hidden border-muted/60 hover:border-primary/50 transition-colors duration-300 flex flex-col p-4 bg-zinc-900/50">
+                    <Card key={quiz.id || quiz._id} className="group overflow-hidden border-muted/60 hover:border-primary/50 transition-colors duration-300 flex flex-col p-4 bg-zinc-900/50">
                         <div className="relative h-60 w-full overflow-hidden rounded-xl">
                             <Image
                                 src={quiz.image}
@@ -48,7 +82,7 @@ export default function QuizListPage() {
                         </CardContent>
                         <CardFooter className="p-0 pt-6">
                             <Button variant="ghost" className="w-full group/btn justify-start hover:bg-transparent hover:text-foreground transition-all px-0" asChild>
-                                <Link href={`/quiz/${quiz.id}`} className="flex items-center gap-2 text-primary">
+                                <Link href={`/quiz/${quiz.id || quiz._id}`} className="flex items-center gap-2 text-primary">
                                     <span className="font-semibold">Start Quiz</span>
                                     <ArrowRight className="h-4 w-4 transition-transform group-hover/btn:translate-x-1" />
                                 </Link>

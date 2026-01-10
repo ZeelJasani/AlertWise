@@ -21,7 +21,7 @@ export const AuthSync = () => {
                             'Authorization': `Bearer ${token}`
                         },
                         body: JSON.stringify({
-                            userId: user.id,
+                            clerkId: user.id,
                             email: user.primaryEmailAddress?.emailAddress,
                             firstName: user.firstName,
                             lastName: user.lastName,

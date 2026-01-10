@@ -1,24 +1,172 @@
 "use client";
 
-import { useState } from "react";
-import { useParams } from "next/navigation";
-import { quizzes } from "../../../data/quizzes";
+import { useEffect, useState } from "react";
+import { useParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { ArrowLeft, ArrowRight, CheckCircle2, XCircle, Trophy, RotateCcw } from "lucide-react";
+import { ArrowLeft, ArrowRight, CheckCircle2, XCircle, Trophy, RotateCcw, Loader2, AlertTriangle, History } from "lucide-react";
 import Link from "next/link";
+import { Quiz } from "@/types";
+import { useAuth } from "@clerk/nextjs";
+import { toast } from "sonner";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 export default function QuizPage() {
     const params = useParams();
+    const router = useRouter();
     const quizId = params.id as string;
-    const quiz = quizzes.find((q) => q.id === quizId);
+    const { getToken, userId } = useAuth();
+
+    const [quiz, setQuiz] = useState<Quiz | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [checkingHistory, setCheckingHistory] = useState(true);
+    const [previousAttempt, setPreviousAttempt] = useState<any>(null);
 
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [selectedOption, setSelectedOption] = useState<number | null>(null);
     const [isAnswered, setIsAnswered] = useState(false);
     const [score, setScore] = useState(0);
     const [showResult, setShowResult] = useState(false);
+    const [submitting, setSubmitting] = useState(false);
+
+    useEffect(() => {
+        const fetchQuizAndHistory = async () => {
+            try {
+                const token = await getToken();
+
+                // Fetch Quiz Data
+                const quizRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/quizzes/${quizId}`);
+                if (quizRes.ok) {
+                    const data = await quizRes.json();
+                    setQuiz(data);
+                }
+
+                // Check for previous attempts if user is logged in
+                if (token) {
+                    const historyRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/quizzes/${quizId}/attempts`, {
+                        headers: { Authorization: `Bearer ${token}` }
+                    });
+                    if (historyRes.ok) {
+                        const history = await historyRes.json();
+                        if (history && history.length > 0) {
+                            setPreviousAttempt(history[0]); // Get most recent attempt
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            } finally {
+                setLoading(false);
+                setCheckingHistory(false);
+            }
+        };
+
+        if (quizId) {
+            fetchQuizAndHistory();
+        }
+    }, [quizId, getToken]);
+
+    // Warn on tab close/refresh if quiz is in progress
+    useEffect(() => {
+        const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+            if (!showResult && !previousAttempt && !loading && currentQuestionIndex > 0) {
+                e.preventDefault();
+                e.returnValue = '';
+            }
+        };
+        window.addEventListener('beforeunload', handleBeforeUnload);
+        return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+    }, [showResult, previousAttempt, loading, currentQuestionIndex]);
+
+    const handleOptionSelect = (index: number) => {
+        if (isAnswered) return;
+        setSelectedOption(index);
+    };
+
+    const handleCheckAnswer = () => {
+        if (selectedOption === null || !quiz) return;
+
+        const currentQuestion = quiz.questions[currentQuestionIndex];
+        const isCorrect = selectedOption === currentQuestion.correctAnswer;
+        if (isCorrect) {
+            setScore(score + 1);
+        }
+        setIsAnswered(true);
+    };
+
+    const handleNext = async () => {
+        if (!quiz) return;
+
+        if (currentQuestionIndex < quiz.questions.length - 1) {
+            setCurrentQuestionIndex(currentQuestionIndex + 1);
+            setSelectedOption(null);
+            setIsAnswered(false);
+        } else {
+            await submitQuiz();
+        }
+    };
+
+    const submitQuiz = async () => {
+        if (!quiz) return;
+        setSubmitting(true);
+        try {
+            const token = await getToken();
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/quizzes/${quizId}/submit`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    score: score,
+                    totalQuestions: quiz.questions.length
+                })
+            });
+
+            if (res.ok) {
+                setShowResult(true);
+            } else {
+                toast.error("Failed to save results. Please try again.");
+            }
+        } catch (error) {
+            console.error(error);
+            toast.error("An error occurred while saving your results.");
+        } finally {
+            setSubmitting(false);
+        }
+    };
+
+    const handleRetake = () => {
+        setPreviousAttempt(null);
+        setCurrentQuestionIndex(0);
+        setSelectedOption(null);
+        setIsAnswered(false);
+        setScore(0);
+        setShowResult(false);
+    };
+
+    const handleExit = () => {
+        router.push('/quiz');
+    };
+
+    if (loading || checkingHistory) {
+        return (
+            <div className="flex h-screen items-center justify-center">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            </div>
+        );
+    }
 
     if (!quiz) {
         return (
@@ -31,43 +179,42 @@ export default function QuizPage() {
         );
     }
 
-    const currentQuestion = quiz.questions[currentQuestionIndex];
-    const totalQuestions = quiz.questions.length;
-    const progress = ((currentQuestionIndex) / totalQuestions) * 100;
+    // View: Already Attempted
+    if (previousAttempt && !showResult) {
+        return (
+            <div className="container mx-auto py-12 px-4 flex items-center justify-center min-h-[80vh]">
+                <Card className="w-full max-w-md text-center p-6 border-muted/60 bg-zinc-900/50 backdrop-blur-sm">
+                    <CardHeader>
+                        <div className="mx-auto bg-yellow-500/10 p-4 rounded-full mb-4">
+                            <History className="h-12 w-12 text-yellow-500" />
+                        </div>
+                        <CardTitle className="text-2xl font-bold mb-2">You already given this quiz</CardTitle>
+                        <p className="text-muted-foreground">
+                            You completed this quiz on {new Date(previousAttempt.completedAt).toLocaleDateString()}.
+                        </p>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                        <div className="text-4xl font-black text-white mb-2">
+                            {previousAttempt.score} / {previousAttempt.totalQuestions}
+                        </div>
+                        <p className="text-sm text-zinc-500">
+                            Do you want to improve your score?
+                        </p>
+                    </CardContent>
+                    <CardFooter className="flex flex-col gap-3">
+                        <Button onClick={handleRetake} className="w-full" size="lg">
+                            Take Quiz Again
+                        </Button>
+                        <Button variant="outline" className="w-full" asChild>
+                            <Link href="/quiz">Back to Quizzes</Link>
+                        </Button>
+                    </CardFooter>
+                </Card>
+            </div>
+        );
+    }
 
-    const handleOptionSelect = (index: number) => {
-        if (isAnswered) return;
-        setSelectedOption(index);
-    };
-
-    const handleCheckAnswer = () => {
-        if (selectedOption === null) return;
-
-        const isCorrect = selectedOption === currentQuestion.correctAnswer;
-        if (isCorrect) {
-            setScore(score + 1);
-        }
-        setIsAnswered(true);
-    };
-
-    const handleNext = () => {
-        if (currentQuestionIndex < totalQuestions - 1) {
-            setCurrentQuestionIndex(currentQuestionIndex + 1);
-            setSelectedOption(null);
-            setIsAnswered(false);
-        } else {
-            setShowResult(true);
-        }
-    };
-
-    const handleRestart = () => {
-        setCurrentQuestionIndex(0);
-        setSelectedOption(null);
-        setIsAnswered(false);
-        setScore(0);
-        setShowResult(false);
-    };
-
+    // View: Results
     if (showResult) {
         return (
             <div className="container mx-auto py-12 px-4 flex items-center justify-center min-h-[80vh]">
@@ -78,23 +225,23 @@ export default function QuizPage() {
                         </div>
                         <CardTitle className="text-3xl font-bold mb-2">Quiz Completed!</CardTitle>
                         <p className="text-muted-foreground">
-                            You scored {score} out of {totalQuestions}
+                            You scored {score} out of {quiz.questions.length}
                         </p>
                     </CardHeader>
                     <CardContent className="space-y-4">
                         <div className="text-6xl font-black text-primary mb-6">
-                            {Math.round((score / totalQuestions) * 100)}%
+                            {Math.round((score / quiz.questions.length) * 100)}%
                         </div>
                         <p className="text-sm text-zinc-400">
-                            {score === totalQuestions
+                            {score === quiz.questions.length
                                 ? "Perfect score! You are a disaster preparedness expert."
-                                : score > totalQuestions / 2
+                                : score > quiz.questions.length / 2
                                     ? "Great job! You know your stuff."
                                     : "Keep learning! Review the materials and try again."}
                         </p>
                     </CardContent>
                     <CardFooter className="flex flex-col gap-3">
-                        <Button onClick={handleRestart} className="w-full" size="lg">
+                        <Button onClick={handleRetake} className="w-full" size="lg">
                             <RotateCcw className="mr-2 h-4 w-4" /> Try Again
                         </Button>
                         <Button variant="outline" className="w-full" asChild>
@@ -106,17 +253,39 @@ export default function QuizPage() {
         );
     }
 
+    // View: Taking Quiz
+    const currentQuestion = quiz.questions[currentQuestionIndex];
+    if (!currentQuestion) return null;
+
+    const totalQuestions = quiz.questions.length;
+    const progress = ((currentQuestionIndex) / totalQuestions) * 100;
+
     return (
         <div className="container mx-auto py-12 px-4 md:px-6 lg:px-8 max-w-4xl min-h-[85vh] flex flex-col justify-center">
             {/* Back & Progress Header */}
             <div className="mb-10 space-y-6">
                 <div className="flex items-center justify-between">
-                    <Button variant="ghost" className="pl-0 hover:bg-transparent hover:text-primary transition-colors text-muted-foreground hover:text-foreground" asChild>
-                        <Link href="/quiz">
-                            <ArrowLeft className="h-4 w-4 mr-2" />
-                            <span className="font-medium">Exit Quiz</span>
-                        </Link>
-                    </Button>
+                    <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                            <Button variant="ghost" className="pl-0 hover:bg-transparent hover:text-red-500 transition-colors text-muted-foreground">
+                                <ArrowLeft className="h-4 w-4 mr-2" />
+                                <span className="font-medium">Exit Quiz</span>
+                            </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent className="bg-zinc-900 border-zinc-800">
+                            <AlertDialogHeader>
+                                <AlertDialogTitle>Are you really want to exit quiz?</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                    If you exit now, your progress will not be saved.
+                                </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                                <AlertDialogCancel className="border-zinc-700">Cancel</AlertDialogCancel>
+                                <AlertDialogAction onClick={handleExit} className="bg-red-600 hover:bg-red-700">Exit Quiz</AlertDialogAction>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialog>
+
                     <div className="text-sm font-medium text-muted-foreground">
                         Question <span className="text-foreground">{currentQuestionIndex + 1}</span> / {totalQuestions}
                     </div>
@@ -194,9 +363,13 @@ export default function QuizPage() {
                             onClick={handleNext}
                             size="lg"
                             className="w-full md:w-auto px-8 py-6 text-lg font-semibold animate-in slide-in-from-right-4 fade-in duration-300 ml-auto"
+                            disabled={submitting}
                         >
-                            <span className="mr-2">{currentQuestionIndex < totalQuestions - 1 ? "Next Question" : "See Results"}</span>
-                            {currentQuestionIndex < totalQuestions - 1 && <ArrowRight className="h-5 w-5" />}
+                            <span className="mr-2">
+                                {submitting ? "Saving..." : (currentQuestionIndex < totalQuestions - 1 ? "Next Question" : "See Results")}
+                            </span>
+                            {!submitting && currentQuestionIndex < totalQuestions - 1 && <ArrowRight className="h-5 w-5" />}
+                            {submitting && <Loader2 className="h-5 w-5 animate-spin" />}
                         </Button>
                     )}
                 </CardFooter>

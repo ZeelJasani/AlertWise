@@ -1,12 +1,46 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
-import { disasters } from "../../data/disasters";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowRight, ArrowLeft, Package, Phone, HeartPulse, CheckCircle2 } from "lucide-react";
+import { ArrowRight, ArrowLeft, Package, Phone, HeartPulse, CheckCircle2, Loader2 } from "lucide-react";
+import { Disaster } from "@/types";
 
 export default function LearnPage() {
+    const [disasters, setDisasters] = useState<Disaster[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchDisasters = async () => {
+            try {
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/disasters`);
+                if (res.ok) {
+                    const data = await res.json();
+                    setDisasters(data);
+                } else {
+                    console.error("Failed to fetch disasters");
+                }
+            } catch (error) {
+                console.error("Error fetching disasters:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchDisasters();
+    }, []);
+
+    if (loading) {
+        return (
+            <div className="flex h-screen items-center justify-center">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            </div>
+        );
+    }
+
     return (
         <div className="container mx-auto py-12 px-4 md:px-12 lg:px-24 max-w-6xl space-y-10">
             {/* Back Button */}

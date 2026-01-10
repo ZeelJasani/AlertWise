@@ -1,21 +1,31 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { disasters } from "../../../data/disasters";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Clock, ShieldAlert, CheckCircle2, AlertTriangle, PlayCircle } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { Disaster } from "@/types";
 
-export function generateStaticParams() {
-    return disasters.map((disaster) => ({
-        slug: disaster.slug,
-    }));
+// Force dynamic rendering to fetch fresh data
+export const dynamic = 'force-dynamic';
+
+async function getDisaster(slug: string): Promise<Disaster | null> {
+    try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/disasters/${slug}`, {
+            cache: 'no-store'
+        });
+        if (!res.ok) return null;
+        return res.json();
+    } catch (error) {
+        console.error("Error fetching disaster:", error);
+        return null;
+    }
 }
 
 export default async function DisasterPage({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;
-    const disaster = disasters.find((d) => d.slug === slug);
+    const disaster = await getDisaster(slug);
 
     if (!disaster) {
         notFound();
