@@ -6,7 +6,7 @@ import User from '../models/user.model';
 export const createSOS = async (req: Request, res: Response) => {
     try {
         const { location, message } = req.body;
-        const userId = req.auth.userId;
+        const userId = req.auth().userId;
 
         // Fetch user details for the record
         const user = await User.findOne({ clerkId: userId });
@@ -33,7 +33,7 @@ export const createSOS = async (req: Request, res: Response) => {
 // User: Get their own history
 export const getMySOS = async (req: Request, res: Response) => {
     try {
-        const failedSOS = await SOS.find({ userId: req.auth.userId }).sort({ createdAt: -1 });
+        const failedSOS = await SOS.find({ userId: req.auth().userId }).sort({ createdAt: -1 });
         res.json(failedSOS);
     } catch (error) {
         res.status(500).json({ message: "Error fetching history", error });

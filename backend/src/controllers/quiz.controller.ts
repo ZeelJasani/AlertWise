@@ -62,7 +62,7 @@ export const deleteQuiz = async (req: Request, res: Response) => {
 // Check if user has taken the quiz
 export const getUserQuizAttempts = async (req: Request, res: Response) => {
     try {
-        const clerkId = req.auth.userId;
+        const clerkId = req.auth().userId;
         if (!clerkId) return res.status(401).json({ message: "Unauthorized" });
 
         const attempts = await QuizResult.find({ userId: clerkId, quizId: req.params.id }).sort({ completedAt: -1 });
@@ -75,7 +75,7 @@ export const getUserQuizAttempts = async (req: Request, res: Response) => {
 // Submit a quiz result
 export const submitQuizResult = async (req: Request, res: Response) => {
     try {
-        const clerkId = req.auth.userId;
+        const clerkId = req.auth().userId;
         if (!clerkId) return res.status(401).json({ message: "Unauthorized" });
 
         const { score, totalQuestions } = req.body;

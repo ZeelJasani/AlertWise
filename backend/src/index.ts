@@ -38,7 +38,7 @@ app.get('/', (req: Request, res: Response) => {
 // Example protected route
 app.get('/protected', requireAuth(), (req: Request, res: Response) => {
     // @ts-ignore - auth property is added by clerk middleware
-    res.json({ message: "This is a protected route", userId: (req as any).auth.userId });
+    res.json({ message: "This is a protected route", userId: (req as any).auth().userId });
 });
 
 app.listen(PORT, () => {

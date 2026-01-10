@@ -5,7 +5,7 @@ import User from '../models/user.model';
 declare global {
     namespace Express {
         interface Request {
-            auth: {
+            auth: () => {
                 userId: string;
                 sessionId: string;
                 getToken: () => Promise<string | null>;
@@ -16,7 +16,7 @@ declare global {
 
 export const requireAdmin = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const userId = req.auth.userId;
+        const userId = req.auth().userId;
 
         if (!userId) {
             return res.status(401).json({ message: "Unauthorized" });
