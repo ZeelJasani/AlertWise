@@ -1,10 +1,6 @@
-
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft } from "lucide-react";
+import { SignUp } from "@clerk/nextjs";
 
 export default function RegisterPage() {
     return (
@@ -18,41 +14,9 @@ export default function RegisterPage() {
             </Link>
             <div className="lg:p-8">
                 <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
-                    <Card className="border-muted/60 bg-card/50 backdrop-blur-sm">
-                        <CardHeader className="space-y-1">
-                            <CardTitle className="text-2xl font-bold tracking-tight">Create an account</CardTitle>
-                            <CardDescription>
-                                Enter your details below to create your account
-                            </CardDescription>
-                        </CardHeader>
-                        <CardContent className="grid gap-4">
-                            <div className="grid gap-2">
-                                <Label htmlFor="name">Full Name</Label>
-                                <Input id="name" placeholder="John Doe" />
-                            </div>
-                            <div className="grid gap-2">
-                                <Label htmlFor="email">Email</Label>
-                                <Input id="email" type="email" placeholder="m@example.com" />
-                            </div>
-                            <div className="grid gap-2">
-                                <Label htmlFor="password">Password</Label>
-                                <Input id="password" type="password" />
-                            </div>
-                            <div className="grid gap-2">
-                                <Label htmlFor="confirm-password">Confirm Password</Label>
-                                <Input id="confirm-password" type="password" />
-                            </div>
-                            <Button className="w-full">Create account</Button>
-                        </CardContent>
-                        <CardFooter>
-                            <p className="text-sm text-muted-foreground text-center w-full">
-                                Already have an account?{" "}
-                                <Link href="/login" className="text-primary hover:underline underline-offset-4">
-                                    Login
-                                </Link>
-                            </p>
-                        </CardFooter>
-                    </Card>
+                    <div className="flex justify-center">
+                        <SignUp routing="path" path="/register" />
+                    </div>
                 </div>
             </div>
         </div>

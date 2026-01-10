@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 import { MobileSearchIcon } from "@/components/mobile-search-icon";
 import { ThemeToggle } from "@/components/theme-toggle";
 import DarkPng from "../public/branding/better-auth-logo-dark.png";
@@ -104,13 +105,29 @@ export const Navbar = () => {
 				</Link>
 				<div className="md:col-span-10 flex items-center justify-end relative">
 					<ul className="navbar:flex items-center divide-x w-max hidden shrink-0">
-						{navMenu.map((menu, i) => (
-							<NavLink key={menu.name} href={menu.path}>
-								{menu.name}
-							</NavLink>
-						))}
+						{navMenu.map((menu, i) => {
+							if (menu.path === '/login' || menu.path === '/register') {
+								return (
+									<SignedOut key={menu.path}>
+										<NavLink href={menu.path}>
+											{menu.name}
+										</NavLink>
+									</SignedOut>
+								);
+							}
+							return (
+								<NavLink key={menu.name} href={menu.path}>
+									{menu.name}
+								</NavLink>
+							);
+						})}
 					</ul>
 					<MobileSearchIcon />
+					<SignedIn>
+						<div className="flex items-center px-4 border-l self-stretch">
+							<UserButton />
+						</div>
+					</SignedIn>
 					<ThemeToggle />
 					<NavbarMobileBtn />
 				</div>
