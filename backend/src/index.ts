@@ -28,7 +28,7 @@ app.use('/api/admin', adminRoutes);
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI as string)
-    .then(() => console.log('MongoDB connected 🫡✨'))
+    .then(() => console.log('MongoDB connected'))
     .catch(err => console.error('MongoDB connection error:', err));
 
 app.get('/', (req: Request, res: Response) => {
@@ -41,6 +41,11 @@ app.get('/protected', requireAuth(), (req: Request, res: Response) => {
     res.json({ message: "This is a protected route", userId: (req as any).auth().userId });
 });
 
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-});
+// Basic connection for production
+if (process.env.NODE_ENV !== 'production') {
+    app.listen(PORT, () => {
+        console.log(`Server is running on port ${PORT}`);
+    });
+}
+
+export default app;
