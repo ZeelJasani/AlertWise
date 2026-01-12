@@ -72,7 +72,7 @@ const features = [
 	},
 ];
 
-export default function Features({ stars }: { stars: string | null }) {
+export default function Features() {
 	return (
 		<div className="md:w-10/12 mt-10 mx-auto relative md:border-l-0 md:border-b-0 md:border-[1.2px] rounded-none -pr-2 dark:bg-black ">
 			<div className="w-full md:mx-0">

@@ -1,11 +1,8 @@
-import Link from "next/link";
 import Features from "@/components/features";
 import Hero from "@/components/landing/hero";
 import Section from "@/components/landing/section";
 
 export default async function HomePage() {
-  // Mock stars for now since fetch might fail or not be relevant
-  const stars = "1,234";
   return (
     <main className="h-min mx-auto overflow-x-hidden">
       <Section
@@ -16,7 +13,7 @@ export default async function HomePage() {
         id="hero"
       >
         <Hero />
-        <Features stars={stars} />
+        <Features />
         <hr className="h-px bg-border" />
       </Section>
     </main>
