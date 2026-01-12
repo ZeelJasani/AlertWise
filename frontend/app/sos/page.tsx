@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth, useUser } from "@clerk/nextjs";
 import { ShieldAlert, MapPin, Send, History } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -27,7 +27,7 @@ export default function SOSPage() {
     const [history, setHistory] = useState<SOSRequest[]>([]);
     const [historyLoading, setHistoryLoading] = useState(true);
 
-    const fetchHistory = async () => {
+    const fetchHistory = React.useCallback(async () => {
         try {
             const token = await getToken();
             const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/sos/my-history`, {
@@ -42,19 +42,19 @@ export default function SOSPage() {
         } finally {
             setHistoryLoading(false);
         }
-    };
+    }, [getToken, setHistory, setHistoryLoading]);
 
     useEffect(() => {
         if (user) {
             fetchHistory();
         }
-    }, [user]);
+    }, [user, fetchHistory]);
 
     const handleAutoLocation = () => {
         if ("geolocation" in navigator) {
             navigator.geolocation.getCurrentPosition((position) => {
                 setLocation(`${position.coords.latitude.toFixed(4)}, ${position.coords.longitude.toFixed(4)}`);
-            }, (error) => {
+            }, () => {
                 alert("Could not get location. Please enter manually.");
             });
         } else {
@@ -109,7 +109,7 @@ export default function SOSPage() {
 
             <div className="grid md:grid-cols-2 gap-8">
                 {/* SOS Form */}
-                <Card className="bg-zinc-900/50 border-zinc-800 backdrop-blur-sm">
+                <Card className="bg-card dark:bg-card border-border backdrop-blur-sm">
                     <CardHeader>
                         <CardTitle className="text-xl">Request Help</CardTitle>
                         <CardDescription>Fill out the form below to send an alert.</CardDescription>
@@ -124,7 +124,7 @@ export default function SOSPage() {
                                         value={location}
                                         onChange={(e) => setLocation(e.target.value)}
                                         required
-                                        className="bg-zinc-950 border-zinc-800"
+                                        className="bg-card border-border"
                                     />
                                     <Button
                                         type="button"
@@ -132,7 +132,7 @@ export default function SOSPage() {
                                         size="icon"
                                         onClick={handleAutoLocation}
                                         title="Use Current Location"
-                                        className="border-zinc-700 bg-zinc-900"
+                                        className="border-border bg-muted/50"
                                     >
                                         <MapPin className="h-4 w-4" />
                                     </Button>
@@ -146,7 +146,7 @@ export default function SOSPage() {
                                     value={message}
                                     onChange={(e) => setMessage(e.target.value)}
                                     required
-                                    className="bg-zinc-950 border-zinc-800 min-h-[120px]"
+                                    className="bg-card border-border min-h-[120px]"
                                 />
                             </div>
 
@@ -166,7 +166,7 @@ export default function SOSPage() {
                 </Card>
 
                 {/* History Section */}
-                <Card className="bg-zinc-900/30 border-zinc-800">
+                <Card className="bg-card/50 border-border">
                     <CardHeader>
                         <CardTitle className="text-xl flex items-center gap-2">
                             <History className="h-5 w-5 text-zinc-400" /> Request History
@@ -180,7 +180,7 @@ export default function SOSPage() {
                                 <p className="text-zinc-500 text-sm text-center py-8">No previous requests.</p>
                             ) : (
                                 history.map((req) => (
-                                    <div key={req._id} className="p-4 rounded-lg bg-zinc-950/50 border border-zinc-800/50 space-y-2">
+                                    <div key={req._id} className="p-4 rounded-lg bg-card/30 border border-border space-y-2">
                                         <div className="flex justify-between items-start">
                                             <Badge variant="outline" className={`
                                                 ${req.status === 'approved' ? 'text-emerald-400 border-emerald-400/30 bg-emerald-400/10' : ''}
@@ -191,7 +191,7 @@ export default function SOSPage() {
                                             </Badge>
                                             <span className="text-xs text-zinc-600">{new Date(req.createdAt).toLocaleDateString()}</span>
                                         </div>
-                                        <p className="text-zinc-300 text-sm">"{req.message}"</p>
+                                        <p className="text-zinc-300 text-sm">&quot;{req.message}&quot;</p>
                                         <div className="flex items-center gap-1 text-xs text-zinc-500">
                                             <MapPin className="h-3 w-3" /> {req.location}
                                         </div>

@@ -63,7 +63,7 @@ export default function QuizListPage() {
             {/* Quiz Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 animate-in fade-in-50 slide-in-from-bottom-2 duration-500">
                 {quizzes.map((quiz) => (
-                    <Card key={quiz.id || quiz._id} className="group overflow-hidden border-muted/60 hover:border-primary/50 transition-colors duration-300 flex flex-col p-4 bg-zinc-900/50">
+                    <Card key={quiz.id || quiz._id} className="group overflow-hidden border-border hover:border-primary/50 transition-colors duration-300 flex flex-col p-4 bg-card">
                         <div className="relative h-60 w-full overflow-hidden rounded-xl">
                             <Image
                                 src={quiz.image}

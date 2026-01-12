@@ -76,7 +76,7 @@ export default function LearnPage() {
                 <TabsContent value="disaster-types" className="mt-0 space-y-8 animate-in fade-in-50 slide-in-from-bottom-2 duration-500">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                         {disasters.map((disaster) => (
-                            <Card key={disaster.slug} className="group overflow-hidden border-muted/60 hover:border-primary/50 transition-colors duration-300 flex flex-col p-4 bg-zinc-900/50">
+                            <Card key={disaster.slug} className="group overflow-hidden border-border hover:border-primary/50 transition-colors duration-300 flex flex-col p-4 bg-card">
                                 <div className="relative h-60 w-full overflow-hidden rounded-xl">
                                     <Image
                                         src={disaster.image}
@@ -160,9 +160,9 @@ export default function LearnPage() {
 
 function SafetyListCard({ title, icon, items }: { title: string, icon: React.ReactNode, items: string[] }) {
     return (
-        <Card className="border-muted/60 bg-card/50 backdrop-blur-sm">
+        <Card className="border-border bg-card/50 backdrop-blur-sm">
             <CardHeader className="flex flex-row items-center gap-4 pb-2">
-                <div className="p-2.5 bg-muted rounded-xl">
+                <div className="p-2.5 bg-muted/50 rounded-xl">
                     {icon}
                 </div>
                 <CardTitle className="text-xl font-bold">{title}</CardTitle>

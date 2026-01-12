@@ -120,7 +120,7 @@ const TestimonialItem = ({
 							<div
 								key={indx}
 								className={cn(
-									"flex flex-col justify-between h-[200px] rounded-xl border border-black/10 shrink-0 grow-0 w-[300px] bg-white dark:bg-zinc-950 dark:border-white/10 shadow-sm transition-all hover:shadow-md",
+									"flex flex-col justify-between h-[200px] rounded-xl border border-black/10 shrink-0 grow-0 w-[300px] bg-white dark:bg-black dark:border-white/5 shadow-sm transition-all hover:shadow-md",
 								)}
 							>
 								<div className="flex-1 overflow-hidden">

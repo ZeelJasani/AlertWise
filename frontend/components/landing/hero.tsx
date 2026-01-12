@@ -15,14 +15,14 @@ import { Spotlight } from "./spotlight";
 
 export default function Hero() {
 	return (
-		<section className="relative w-full flex md:items-center md:justify-center bg-white/96 dark:bg-black/[0.96] antialiased min-h-[40rem] md:min-h-[50rem] lg:min-h-[40rem]">
+		<section className="relative w-full flex md:items-center md:justify-center bg-white/96 dark:bg-black antialiased min-h-[40rem] md:min-h-[50rem] lg:min-h-[40rem]">
 			{/* Spotlight Effect */}
-			<Spotlight />
+			<Spotlight fill="#a855f7" />
 
 			{/* Background Grid */}
 			<div className="absolute inset-0 left-5 right-5 lg:left-16 lg:right-14 xl:left-16 xl:right-14">
-				<div className="absolute inset-0 bg-grid text-muted/50 dark:text-white/[0.02]" />
-				<div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background" />
+				<div className="absolute inset-0 bg-grid text-muted/50 dark:text-white/[0.03]" />
+				<div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background dark:to-black" />
 			</div>
 
 			{/* Content */}
@@ -57,7 +57,7 @@ export default function Hero() {
 								</p>
 							</div>
 
-							<div className="relative flex items-center gap-2 w-full sm:w-[90%] border border-white/10">
+							<div className="relative flex items-center gap-2 w-full sm:w-[90%] border border-black/5 dark:border-white/10">
 								<GradientBG className="w-full flex items-center justify-between gap-2">
 									<div className="w-full flex flex-col min-[350px]:flex-row min-[350px]:items-center gap-0.5 min-[350px]:gap-2 min-w-0">
 										<p className="text-xs sm:text-sm font-mono select-none tracking-tighter space-x-1 shrink-0">

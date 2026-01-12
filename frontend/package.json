@@ -30,6 +30,7 @@
     "foxact": "^0.2.51",
     "framer-motion": "^12.25.0",
     "fumadocs-core": "^16.4.6",
+    "fumadocs-ui": "^16.4.6",
     "geist": "^1.5.1",
     "jotai": "^2.16.1",
     "js-beautify": "^1.15.4",
