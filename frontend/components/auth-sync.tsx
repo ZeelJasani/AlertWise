@@ -14,7 +14,7 @@ export const AuthSync = () => {
                 isSynced.current = true; // Prevent double sync in React strict mode
                 try {
                     const token = await getToken();
-                    await fetch('http://localhost:5000/api/users/sync', {
+                    await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/users/sync`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
